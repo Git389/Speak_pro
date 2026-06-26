@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Epsilon Speak Pro</title>
+<style>
+  :root{
+    --navy:#1f3864; --blue:#2e75b6; --light:#d5e8f0; --grey:#f2f4f7;
+    --green:#1e8e5a; --amber:#c98a00; --red:#c0392b; --ink:#1c2430; --muted:#667085;
+    --line:#e3e8ef; --radius:14px; --shadow:0 6px 24px rgba(20,40,80,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#eef2f7;}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;font-size:15px;padding:11px 18px;transition:.15s;}
+  button:active{transform:translateY(1px)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .btn-primary{background:var(--navy);color:#fff;font-weight:600}
+  .btn-primary:hover{background:#16294d}
+  .btn-blue{background:var(--blue);color:#fff;font-weight:600}
+  .btn-blue:hover{background:#256099}
+  .btn-ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn-ghost:hover{background:var(--grey)}
+  .btn-danger{background:#fff;color:var(--red);border:1px solid #f0c4be}
+  .btn-danger:hover{background:#fdecea}
+  input,textarea,select{font-family:inherit;font-size:15px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;width:100%;background:#fff;color:var(--ink)}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,117,182,.15)}
+  label{font-size:13px;font-weight:600;color:var(--muted);display:block;margin:0 0 6px}
+  .field{margin-bottom:16px}
+  .hidden{display:none!important}
+  .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:26px}
+  .wrap{max-width:1060px;margin:0 auto;padding:24px}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .muted{color:var(--muted)}
+  h1,h2,h3{color:var(--navy);margin:0 0 12px}
+  /* top bar */
+  .topbar{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:13px 26px}
+  .topbar .brand{font-weight:800;letter-spacing:.5px;font-size:18px}
+  .topbar .brand small{font-weight:500;opacity:.8;letter-spacing:0}
+  .topbar .who{font-size:14px;opacity:.95;display:flex;align-items:center;gap:14px}
+  /* login */
+  .login-bg{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1f3864,#2e75b6);padding:20px}
+  .login-card{width:100%;max-width:430px;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:34px}
+  .logo{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#2e75b6,#1f3864);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;margin-bottom:14px}
+  .tabs{display:flex;gap:8px;background:var(--grey);padding:5px;border-radius:12px;margin-bottom:22px}
+  .tabs button{flex:1;background:transparent;color:var(--muted);font-weight:600}
+  .tabs button.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .hint{font-size:12.5px;color:var(--muted);background:var(--grey);border-radius:10px;padding:10px 12px;margin-top:14px;line-height:1.5}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:10px 12px;border-bottom:2px solid var(--line)}
+  td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:hover td{background:#fafbfd}
+  /* stage / interviewer */
+  .stage{display:flex;gap:24px;flex-wrap:wrap}
+  .avatar-wrap{flex:1;min-width:300px;background:linear-gradient(160deg,#27374f,#0d1726);border-radius:18px;padding:22px;color:#fff;position:relative;overflow:hidden;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+  .avatar-wrap::after{content:"● REC";position:absolute;top:14px;right:16px;font-size:11px;font-weight:700;color:#ff5b5b;letter-spacing:1px;opacity:.0;transition:.3s}
+  .avatar-wrap.live::after{opacity:1;animation:blink 1.2s infinite}
+  #face{width:230px;height:270px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.45))}
+  #head{transform-origin:120px 150px;animation:sway 6s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-1.2deg) translateY(0)}50%{transform:rotate(1.2deg) translateY(-3px)}}
+  .status-chip{margin-top:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:7px 16px;font-size:13px;display:flex;align-items:center;gap:8px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#37d67a;animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.3}}
+  .speech-bubble{background:rgba(255,255,255,.96);color:var(--ink);border-radius:14px;padding:13px 16px;margin-top:16px;font-size:15px;line-height:1.5;max-width:330px;text-align:center;min-height:24px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+  .panel{flex:1.25;min-width:300px}
+  .passage{background:var(--grey);border-left:4px solid var(--blue);border-radius:10px;padding:18px;font-size:17px;line-height:1.7;max-height:260px;overflow:auto}
+  .transcript{background:#fff;border:1px dashed var(--line);border-radius:10px;padding:14px;min-height:64px;font-size:15px;line-height:1.6}
+  .mic-btn{width:74px;height:74px;border-radius:50%;background:var(--blue);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 6px 18px rgba(46,117,182,.4);user-select:none}
+  .mic-btn.rec{background:var(--red);animation:recpulse 1s infinite}
+  @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}50%{box-shadow:0 0 0 14px rgba(192,57,43,0)}}
+  .stepbar{display:flex;gap:8px;margin-bottom:22px}
+  .step{flex:1;height:6px;border-radius:6px;background:var(--line)}
+  .step.done{background:var(--green)}.step.active{background:var(--blue)}
+  .band-big{font-size:62px;font-weight:800;line-height:1}
+  .scorecard{flex:1;min-width:160px;text-align:center;padding:18px;border-radius:14px;background:var(--grey)}
+  .criteria{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+  .meter{height:8px;background:var(--line);border-radius:6px;overflow:hidden;width:120px}
+  .meter>i{display:block;height:100%;background:var(--blue)}
+  .empty{text-align:center;color:var(--muted);padding:40px}
+  .gridform{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.gridform{grid-template-columns:1fr}}
+  .qcard{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fdfefe}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login" class="login-bg">
+  <div class="login-card">
+    <div class="logo">E</div>
+    <h1 style="margin-bottom:2px">Epsilon Speak Pro</h1>
+    <p class="muted" style="margin-top:0">AI English Speaking &amp; Assessment</p>
+    <div class="tabs">
+      <button id="tabStudent" class="active" onclick="setRole('student')">Student</button>
+      <button id="tabAdmin" onclick="setRole('admin')">Admin</button>
+    </div>
+    <div class="field"><label>Username</label><input id="loginUser" placeholder="Enter username"/></div>
+    <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Enter password"/></div>
+    <button class="btn-primary" style="width:100%" onclick="doLogin()">Log in</button>
+    <p id="loginErr" class="muted" style="color:var(--red);min-height:18px;margin:10px 0 0;font-size:13px"></p>
+    <div class="hint" id="loginHint"></div>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="brand">EPSILON SPEAK PRO &nbsp;<small id="roleLabel"></small></div>
+    <div class="who"><span id="whoami"></span><button class="btn-ghost" style="padding:7px 14px" onclick="logout()">Log out</button></div>
+  </div>
+  <div class="wrap" id="view"></div>
+</div>
+
+<script>
+/* ========================================================================
+   DATA LAYER
+   ======================================================================== */
+const DB = {
+  load(){ let d=null; try{d=JSON.parse(localStorage.getItem('esp_db'));}catch(e){} if(!d){d=seed();this.save(d);} return d; },
+  save(d){ localStorage.setItem('esp_db', JSON.stringify(d)); },
+};
+function seed(){
+  return {
+    users:[
+      {u:'admin',p:'admin',role:'admin',name:'Administrator'},
+      {u:'student',p:'1234',role:'student',name:'Demo Student',testId:'t1',slot:''},
+    ],
+    tests:[{
+      id:'t1', name:'IELTS Practice — Set A', slot:'',
+      passage:"Technology has transformed the way we live and work. Over the past two decades, the rapid growth of the internet has connected people across the world, making information available at the touch of a button. While these changes bring many benefits, they also raise important questions about privacy, attention, and the future of human relationships.",
+      questions:[
+        {topic:"Describe a skill you would like to learn.", reference:"I would really like to learn how to play the piano. I have always been drawn to music because it allows people to express emotions that are difficult to put into words. Learning the piano would require patience and daily practice, but I believe the sense of achievement would be deeply rewarding."},
+        {topic:"Do you think people rely too much on technology? Why?", reference:"In my opinion, many people have become overly dependent on technology in their daily lives. We use our phones for navigation, communication, and even simple calculations, which can weaken certain skills over time. However, technology also empowers us, so the key is finding a healthy balance."}
+      ],
+    }],
+    results:[],
+  };
+}
+let db = DB.load();
+let session=null, loginRole='student';
+
+/* ========================================================================
+   AUTH
+   ======================================================================== */
+function setRole(r){
+  loginRole=r;
+  tabStudent.classList.toggle('active',r==='student');
+  tabAdmin.classList.toggle('active',r==='admin');
+  loginHint.innerHTML = r==='admin'
+    ? "Demo admin login &nbsp;→&nbsp; <b>admin</b> / <b>admin</b>"
+    : "Demo student login &nbsp;→&nbsp; <b>student</b> / <b>1234</b>";
+}
+function doLogin(){
+  const u=loginUser.value.trim(), p=loginPass.value;
+  const user=db.users.find(x=>x.u===u&&x.p===p&&x.role===loginRole);
+  if(!user){ loginErr.textContent="Invalid username or password for this role."; return; }
+  loginErr.textContent=""; session={u:user.u,role:user.role,name:user.name};
+  login.classList.add('hidden'); app.classList.remove('hidden');
+  roleLabel.textContent = user.role==='admin'?'Admin Panel':'Student';
+  whoami.textContent=user.name;
+  user.role==='admin'?renderAdmin():renderStudentHome();
+}
+function logout(){ session=null; app.classList.add('hidden'); login.classList.remove('hidden'); loginUser.value=''; loginPass.value=''; try{speechSynthesis.cancel();}catch(e){} stopRecognition(); }
+setRole('student');
+
+/* ========================================================================
+   ADMIN PANEL
+   ======================================================================== */
+let adminTab='tests';
+function renderAdmin(){
+  document.getElementById('view').innerHTML=`
+   <div class="row" style="margin-bottom:18px">
+     <button class="${adminTab==='tests'?'btn-blue':'btn-ghost'}" onclick="adminTab='tests';renderAdmin()">Tests</button>
+     <button class="${adminTab==='students'?'btn-blue':'btn-ghost'}" onclick="adminTab='students';renderAdmin()">Students</button>
+     <button class="${adminTab==='results'?'btn-blue':'btn-ghost'}" onclick="adminTab='results';renderAdmin()">Results</button>
+     <button class="${adminTab==='settings'?'btn-blue':'btn-ghost'}" onclick="adminTab='settings';renderAdmin()">AI &amp; Avatar</button>
+   </div><div id="adminBody"></div>`;
+  if(adminTab==='tests')adminTests(); if(adminTab==='students')adminStudents(); if(adminTab==='results')adminResults(); if(adminTab==='settings')adminSettings();
+}
+function adminSettings(){
+  const s=db.settings;
+  document.getElementById('adminBody').innerHTML=`
+    <div class="card" style="margin-bottom:18px"><h2>AI examiner model</h2>
+      <p class="muted">Connect an OpenAI-compatible model — local <b>Ollama</b> / <b>LM Studio</b>, or a cloud endpoint. When set, final speaking scores are produced by this model against the official IELTS band descriptors; otherwise the built-in engine is used.</p>
+      <div class="gridform">
+        <div class="field"><label>API URL (chat completions)</label><input id="llmUrl" value="${esc(s.llmUrl)}" placeholder="http://localhost:11434/v1/chat/completions"/></div>
+        <div class="field"><label>Model name</label><input id="llmModel" value="${esc(s.llmModel)}" placeholder="llama3.1   /   gpt-4o-mini"/></div></div>
+      <div class="field"><label>API key (optional — for cloud endpoints)</label><input id="llmKey" value="${esc(s.llmKey)}" placeholder="leave blank for local Ollama"/></div>
+      <div class="row"><button class="btn-primary" onclick="saveSettings()">Save</button><button class="btn-ghost" onclick="testLLM()">Test connection</button></div>
+      <p id="llmTest" class="muted" style="margin-top:10px;min-height:18px"></p>
+      <p class="muted" style="font-size:12.5px">Tip: local Ollama must allow browser calls — start it with <code>OLLAMA_ORIGINS=*</code>. Most cloud APIs block direct browser calls (CORS) and need the small proxy in the <b>metahuman-server</b> folder.</p></div>
+    <div class="card"><h2>Unreal MetaHuman interviewer</h2>
+      <p class="muted">Paste the <b>Pixel Streaming</b> player URL served by your Unreal MetaHuman server. When set, the interview shows the live photoreal MetaHuman instead of the built-in 2D presenter. Full setup is in the <b>metahuman-server</b> folder.</p>
+      <div class="field"><label>Pixel Streaming URL</label><input id="psUrl" value="${esc(s.psUrl)}" placeholder="https://your-host:port/   (Epic Pixel Streaming web client)"/></div>
+      <button class="btn-primary" onclick="saveSettings()">Save</button></div>`;
+}
+function saveSettings(){ const g=id=>{const e=document.getElementById(id);return e?e.value.trim():null;};
+  const v=(id,cur)=>{const x=g(id);return x===null?cur:x;};
+  db.settings={llmUrl:v('llmUrl',db.settings.llmUrl),llmModel:v('llmModel',db.settings.llmModel),llmKey:v('llmKey',db.settings.llmKey),psUrl:v('psUrl',db.settings.psUrl)};
+  DB.save(db); const t=document.getElementById('llmTest'); if(t)t.textContent='Saved.'; }
+async function testLLM(){ saveSettings(); const el=document.getElementById('llmTest'); el.textContent='Testing…';
+  const r=await llmRaw('Reply with the single word: OK'); el.textContent = r!=null ? ('✓ Model responded: '+String(r).slice(0,80)) : '✗ No response — check the URL, model name, and CORS (local Ollama needs OLLAMA_ORIGINS=*).'; }
+function adminTests(){
+  document.getElementById('adminBody').innerHTML=`
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 style="margin:0">Tests</h2><button class="btn-primary" onclick="editTest()">+ Create test</button></div>
+      <table style="margin-top:14px">
+        <thead><tr><th>Name</th><th>Reading</th><th>Speaking topics</th><th>Time slot</th><th></th></tr></thead>
+        <tbody>${db.tests.map(t=>`<tr><td><b>${esc(t.name)}</b></td>
+          <td>${t.passage?'<span class="pill" style="background:var(--light);color:var(--navy)">Set</span>':'<span class="muted">—</span>'}</td>
+          <td>${t.questions.length} topic(s)</td><td>${t.slot?esc(t.slot):'<span class="muted">Anytime</span>'}</td>
+          <td style="text-align:right"><button class="btn-ghost" onclick="editTest('${t.id}')">Edit</button>
+          <button class="btn-danger" onclick="delTest('${t.id}')">Delete</button></td></tr>`).join('')||
+          `<tr><td colspan="5" class="empty">No tests yet.</td></tr>`}</tbody></table></div>`;
+}
+function delTest(id){ if(!confirm('Delete this test?'))return; db.tests=db.tests.filter(t=>t.id!==id); DB.save(db); adminTests(); }
+let draftQs=[];
+function editTest(id){
+  const t=id?db.tests.find(x=>x.id===id):{id:'t'+Date.now(),name:'',slot:'',passage:'',questions:[{topic:'',reference:''}]};
+  document.getElementById('adminBody').innerHTML=`
+    <div class="card"><h2>${id?'Edit test':'Create test'}</h2>
+      <div class="gridform">
+        <div class="field"><label>Test name</label><input id="tName" value="${esc(t.name)}" placeholder="e.g. IELTS Practice — Set B"/></div>
+        <div class="field"><label>Time slot (optional)</label><input id="tSlot" value="${esc(t.slot)}" placeholder="e.g. 24 Jun 2026, 3:00 PM"/></div></div>
+      <div class="field"><label>Reading passage (student reads aloud)</label>
+        <textarea id="tPassage" rows="5" placeholder="Paste the passage...">${esc(t.passage)}</textarea></div>
+      <label>Speaking topics &amp; reference answers</label><div id="qList"></div>
+      <button class="btn-ghost" onclick="addQ()">+ Add speaking topic</button>
+      <div class="row" style="margin-top:20px"><button class="btn-primary" onclick="saveTest('${t.id}')">Save test</button>
+        <button class="btn-ghost" onclick="adminTab='tests';renderAdmin()">Cancel</button></div></div>`;
+  draftQs=JSON.parse(JSON.stringify(t.questions.length?t.questions:[{topic:'',reference:''}])); renderQs();
+}
+function renderQs(){
+  document.getElementById('qList').innerHTML=draftQs.map((q,i)=>`
+    <div class="qcard"><div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px">
+      <b class="muted">Topic ${i+1}</b>${draftQs.length>1?`<button class="btn-danger" style="padding:5px 10px" onclick="rmQ(${i})">Remove</button>`:''}</div>
+      <div class="field"><input oninput="draftQs[${i}].topic=this.value" value="${esc(q.topic)}" placeholder="Speaking question / topic"/></div>
+      <div class="field" style="margin-bottom:0"><textarea rows="2" oninput="draftQs[${i}].reference=this.value" placeholder="Reference answer (guides AI scoring)">${esc(q.reference)}</textarea></div></div>`).join('');
+}
+function addQ(){draftQs.push({topic:'',reference:''});renderQs();}
+function rmQ(i){draftQs.splice(i,1);renderQs();}
+function saveTest(id){
+  const name=document.getElementById('tName').value.trim(); if(!name){alert('Enter a test name.');return;}
+  const obj={id,name,slot:document.getElementById('tSlot').value.trim(),passage:document.getElementById('tPassage').value.trim(),questions:draftQs.filter(q=>q.topic.trim())};
+  const ix=db.tests.findIndex(t=>t.id===id); ix>=0?db.tests[ix]=obj:db.tests.push(obj);
+  DB.save(db); adminTab='tests'; renderAdmin();
+}
+function adminStudents(){
+  const studs=db.users.filter(u=>u.role==='student');
+  document.getElementById('adminBody').innerHTML=`
+    <div class="card" style="margin-bottom:18px"><h2>Add / assign student</h2>
+      <div class="gridform">
+        <div class="field"><label>Full name</label><input id="sName" placeholder="Student name"/></div>
+        <div class="field"><label>Username</label><input id="sUser" placeholder="login username"/></div>
+        <div class="field"><label>Password</label><input id="sPass" placeholder="login password"/></div>
+        <div class="field"><label>Assign test</label><select id="sTest">${db.tests.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></div></div>
+      <button class="btn-primary" onclick="addStudent()">Create student login</button></div>
+    <div class="card"><h2>Students</h2>
+      <table><thead><tr><th>Name</th><th>Username</th><th>Assigned test</th><th>Status</th></tr></thead>
+      <tbody>${studs.map(s=>{const t=db.tests.find(x=>x.id===s.testId);const done=db.results.some(r=>r.user===s.u);
+        return `<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.u)}</td><td>${t?esc(t.name):'<span class="muted">—</span>'}</td>
+        <td>${done?'<span class="pill" style="background:#e3f6ec;color:var(--green)">Completed</span>':'<span class="pill" style="background:#fff4e0;color:var(--amber)">Pending</span>'}</td></tr>`;
+      }).join('')||`<tr><td colspan="4" class="empty">No students yet.</td></tr>`}</tbody></table></div>`;
+}
+function addStudent(){
+  const name=sName.value.trim(),u=sUser.value.trim(),p=sPass.value.trim(),testId=sTest.value;
+  if(!name||!u||!p){alert('Fill name, username and password.');return;}
+  if(db.users.some(x=>x.u===u)){alert('Username already exists.');return;}
+  db.users.push({u,p,role:'student',name,testId,slot:''}); DB.save(db); adminStudents();
+}
+function adminResults(){
+  document.getElementById('adminBody').innerHTML=`<div class="card"><h2>Results</h2>
+    <table><thead><tr><th>Student</th><th>Test</th><th>Reading</th><th>Speaking</th><th>Overall</th><th>Date</th><th></th></tr></thead>
+    <tbody>${db.results.slice().reverse().map((r,i)=>`<tr><td><b>${esc(r.name)}</b></td><td>${esc(r.testName)}</td>
+      <td>${bandPill(r.reading.band)}</td><td>${bandPill(r.speaking.band)}</td><td><b>${bandPill(r.overall)}</b></td>
+      <td class="muted">${new Date(r.date).toLocaleString()}</td>
+      <td style="text-align:right"><button class="btn-ghost" onclick="viewResult(${db.results.length-1-i})">View</button></td></tr>`).join('')
+      ||`<tr><td colspan="7" class="empty">No results yet.</td></tr>`}</tbody></table></div>`;
+}
+function viewResult(ix){ renderReport(db.results[ix], true); }
+
+/* ========================================================================
+   STUDENT HOME
+   ======================================================================== */
+function renderStudentHome(){
+  const me=db.users.find(u=>u.u===session.u), t=db.tests.find(x=>x.id===me.testId), prev=db.results.filter(r=>r.user===session.u);
+  document.getElementById('view').innerHTML=`
+    <div class="card" style="margin-bottom:18px"><h1>Welcome, ${esc(me.name)} 👋</h1>
+      ${t?`<p class="muted">Enable your microphone, then begin when ready. Best experienced in Google Chrome.</p>
+        <div class="card" style="background:var(--grey);box-shadow:none;border:1px solid var(--line)">
+          <div class="row" style="justify-content:space-between;align-items:center">
+            <div><h3 style="margin:0">${esc(t.name)}</h3>
+            <p class="muted" style="margin:4px 0 0">Reading (read-aloud) + Speaking · ${t.questions.length} topic(s) ${t.slot?'· Slot: '+esc(t.slot):''}</p></div>
+            <button class="btn-primary" onclick="startTest('${t.id}')">Start test ▶</button></div></div>`
+      :`<p class="empty">No test assigned yet. Please contact your administrator.</p>`}</div>
+    ${prev.length?`<div class="card"><h2>Your past results</h2>
+      <table><thead><tr><th>Test</th><th>Overall band</th><th>Date</th><th></th></tr></thead>
+      <tbody>${prev.slice().reverse().map(r=>{const gi=db.results.indexOf(r);
+        return `<tr><td>${esc(r.testName)}</td><td>${bandPill(r.overall)}</td><td class="muted">${new Date(r.date).toLocaleString()}</td>
+        <td style="text-align:right"><button class="btn-ghost" onclick="viewResult(${gi})">View report</button></td></tr>`;}).join('')}</tbody></table></div>`:''}`;
+}
+
+/* ========================================================================
+   AVATAR (animated SVG presenter)  + SPEECH OUTPUT
+   ======================================================================== */
+const FACE={
+  el(id){return document.getElementById(id);},
+  lips:{neutral:"M100,196 Q120,204 140,196",happy:"M96,193 Q120,214 144,193",concern:"M100,202 Q120,193 140,202"},
+  setExpr(e){
+    const l=this.el('lips'); if(l)l.setAttribute('d',this.lips[e]||this.lips.neutral);
+    const dy=e==='happy'?-3:e==='concern'?2:0;
+    ['browL','browR'].forEach(b=>{const el=this.el(b); if(el)el.setAttribute('transform',`translate(0,${dy})`);});
+    const li=this.el('mouthInner'); if(li&&e!=='speaking')li.setAttribute('ry',e==='happy'?5:2);
+  },
+  _talk:null,
+  talkStart(){ const inner=this.el('mouthInner'); if(!inner)return; this.talkStop();
+    this._talk=setInterval(()=>{inner.setAttribute('ry',(3+Math.random()*7).toFixed(1));},110); },
+  talkStop(){ if(this._talk){clearInterval(this._talk);this._talk=null;} const inner=this.el('mouthInner'); if(inner)inner.setAttribute('ry',2); },
+  _blink:null,
+  startBlink(){ this.stopBlink(); const loop=()=>{ this.blink(); this._blink=setTimeout(loop,2200+Math.random()*3200); }; this._blink=setTimeout(loop,2000); },
+  stopBlink(){ if(this._blink){clearTimeout(this._blink);this._blink=null;} },
+  blink(){ ['lidL','lidR'].forEach(id=>{const l=this.el(id); if(!l)return; l.setAttribute('transform',l.getAttribute('data-c')+' scale(1,1)');});
+    setTimeout(()=>['lidL','lidR'].forEach(id=>{const l=this.el(id); if(l)l.setAttribute('transform',l.getAttribute('data-c')+' scale(1,0)');}),130); },
+};
+function avatarSVG(){
+  return `<svg id="face" viewBox="0 0 240 270" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="skin" cx="42%" cy="34%" r="75%"><stop offset="0" stop-color="#ffe1c6"/><stop offset="1" stop-color="#e3aa80"/></radialGradient>
+      <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a4427"/><stop offset="1" stop-color="#3c2615"/></linearGradient>
+      <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d6aa6"/><stop offset="1" stop-color="#2b4d7a"/></linearGradient>
+    </defs>
+    <path d="M30,270 Q34,205 120,205 Q206,205 210,270 Z" fill="url(#cloth)"/>
+    <path d="M96,196 h48 v18 q-24,12 -48,0 Z" fill="url(#skin)"/>
+    <g id="head">
+      <path d="M52,120 Q44,40 120,38 Q196,40 188,120 Q188,150 176,150 L64,150 Q52,150 52,120 Z" fill="url(#hair)"/>
+      <ellipse cx="120" cy="128" rx="62" ry="74" fill="url(#skin)"/>
+      <ellipse cx="58" cy="130" rx="9" ry="14" fill="#e3aa80"/><ellipse cx="182" cy="130" rx="9" ry="14" fill="#e3aa80"/>
+      <path d="M50,96 Q70,30 120,40 Q108,70 120,78 Q90,72 72,104 Q60,96 50,96 Z" fill="url(#hair)"/>
+      <path d="M190,96 Q170,30 120,40 Q132,70 120,78 Q150,72 168,104 Q180,96 190,96 Z" fill="url(#hair)"/>
+      <path id="browL" d="M82,108 Q98,100 112,108" stroke="#5a3a20" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path id="browR" d="M128,108 Q142,100 158,108" stroke="#5a3a20" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <g><ellipse cx="97" cy="128" rx="15" ry="10" fill="#fff"/><circle cx="99" cy="129" r="6.5" fill="#6b4a2c"/><circle cx="99" cy="129" r="3" fill="#1a1208"/><circle cx="101.5" cy="126.5" r="1.6" fill="#fff"/>
+        <ellipse id="lidL" cx="97" cy="128" rx="16" ry="10.5" fill="url(#skin)" data-c="translate(97,128.5) scale(1,0) translate(-97,-128.5)" transform="translate(97,128.5) scale(1,0) translate(-97,-128.5)"/></g>
+      <g><ellipse cx="143" cy="128" rx="15" ry="10" fill="#fff"/><circle cx="141" cy="129" r="6.5" fill="#6b4a2c"/><circle cx="141" cy="129" r="3" fill="#1a1208"/><circle cx="143.5" cy="126.5" r="1.6" fill="#fff"/>
+        <ellipse id="lidR" cx="143" cy="128" rx="16" ry="10.5" fill="url(#skin)" data-c="translate(143,128.5) scale(1,0) translate(-143,-128.5)" transform="translate(143,128.5) scale(1,0) translate(-143,-128.5)"/></g>
+      <path d="M120,138 Q112,160 118,166 Q124,168 130,164" stroke="#d59a6e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="84" cy="160" rx="9" ry="6" fill="#f3b48f" opacity=".5"/><ellipse cx="156" cy="160" rx="9" ry="6" fill="#f3b48f" opacity=".5"/>
+      <ellipse id="mouthInner" cx="120" cy="190" rx="15" ry="2" fill="#7a2e36"/>
+      <path id="lips" d="M100,196 Q120,204 140,196" stroke="#b65a52" stroke-width="5" fill="none" stroke-linecap="round"/>
+    </g></svg>`;
+}
+function speak(text, cb){
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text); u.rate=.97; u.pitch=1.05; u.lang='en-US';
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(x=>/en-(US|GB)/.test(x.lang)&&/female|woman|samantha|zira|aria|jenny|google us/i.test(x.name))||vs.find(x=>/en/i.test(x.lang));
+    if(v)u.voice=v;
+    FACE.talkStart(); setAvatar(true);
+    u.onend=()=>{ FACE.talkStop(); setAvatar(false); if(cb)cb(); };
+    u.onerror=()=>{ FACE.talkStop(); setAvatar(false); if(cb)cb(); };
+    speechSynthesis.speak(u);
+    // safety: if voice never fires (some browsers), fall back on a timer
+    if(!vs.length){ setTimeout(()=>{ if(cb){FACE.talkStop();setAvatar(false);cb();} },Math.min(9000,1200+text.length*55)); u.onend=null; u.onerror=null; }
+  }catch(e){ FACE.talkStop&&FACE.talkStop(); if(cb)cb(); }
+}
+function setAvatar(speaking,status){
+  const w=document.querySelector('.avatar-wrap'); if(w)w.classList.toggle('live',recActive);
+  const s=document.getElementById('statusChip'); if(s)s.innerHTML = speaking
+    ? '<span class="dot"></span> AI is speaking'
+    : '<span class="dot" style="background:'+(recActive?'#ffd166':'#9fb3c8')+'"></span> '+(status||(recActive?'Listening...':'Ready'));
+}
+function bubble(t){ const b=document.getElementById('bubble'); if(b)b.textContent=t; }
+function react(expr,text,cb){ FACE.setExpr(expr); bubble(text); speak(text,()=>{ FACE.setExpr('neutral'); cb&&cb(); }); }
+
+/* ========================================================================
+   SPEECH RECOGNITION  (transcript + confidence + timing)
+   ======================================================================== */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null, recActive=false, recConfidence=0, recStart=0, recDuration=0;
+function startRecognition(onText){
+  recConfidence=0; recStart=Date.now(); recDuration=0;
+  if(!SR){
+    const l=document.getElementById('liveT');
+    if(l) l.innerHTML=`<textarea rows="3" style="width:100%" placeholder="Speech recognition needs Chrome — type your response here instead." oninput="window.__manual=this.value;(${onText.toString()})(this.value)"></textarea>`;
+    recActive=true; setAvatar(false,'Type your response'); return;
+  }
+  try{
+    rec=new SR(); rec.continuous=true; rec.interimResults=true; rec.lang='en-US';
+    let finalT='', cs=0, cc=0;
+    rec.onresult=e=>{ let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){ const res=e.results[i], tr=res[0].transcript;
+        if(res.isFinal){ finalT+=tr+' '; if(res[0].confidence>0){cs+=res[0].confidence;cc++;} } else interim+=tr; }
+      recConfidence = cc?cs/cc:0;
+      onText((finalT+interim).trim()); };
+    rec.onerror=()=>{};
+    rec.onend=()=>{ if(recActive){ try{rec.start();}catch(e){} } };
+    recActive=true; rec.start();
+  }catch(e){ recActive=true; }
+}
+function stopRecognition(){ recActive=false; recDuration=(Date.now()-recStart)/1000; try{rec&&rec.stop();}catch(e){} const w=document.querySelector('.avatar-wrap'); if(w)w.classList.remove('live'); }
+
+/* ========================================================================
+   TEST FLOW
+   ======================================================================== */
+let T=null, readingTranscript='', readingConf=0, readingDur=0, speakAnswers=[], qIdx=0, retried=false, curAnswer='';
+function startTest(id){ T=db.tests.find(x=>x.id===id); readingTranscript='';readingConf=0;speakAnswers=[];qIdx=0;retried=false; stepReadingIntro(); }
+function shell(stepActive, inner){
+  const useMH = !!(db.settings && db.settings.psUrl);
+  const visual = useMH
+    ? `<iframe id="mhFrame" src="${esc(db.settings.psUrl)}" allow="autoplay; microphone; camera; fullscreen; clipboard-read; clipboard-write" style="width:100%;height:320px;border:none;border-radius:14px;background:#000"></iframe>
+       <p class="muted" style="margin-top:8px;font-size:12px;opacity:.8;text-align:center">Live Unreal MetaHuman (Pixel Streaming)</p>`
+    : avatarSVG();
+  document.getElementById('view').innerHTML=`
+    <div class="stepbar"><div class="step ${stepActive>0?'done':'active'}"></div>
+      <div class="step ${stepActive>1?'done':stepActive===1?'active':''}"></div><div class="step ${stepActive===2?'active':''}"></div></div>
+    <div class="stage"><div class="avatar-wrap">${visual}
+      <div class="status-chip" id="statusChip"><span class="dot"></span> Ready</div>
+      <div class="speech-bubble" id="bubble">Hello! I'm your AI interviewer.</div></div>
+    <div class="panel card">${inner}</div></div>`;
+  FACE.startBlink(); FACE.setExpr('neutral');
+}
+
+/* ---- READING ---- */
+function stepReadingIntro(){
+  shell(0,`<h2>Part 1 — Reading aloud</h2><p class="muted">Read the passage clearly and confidently. I'll listen and score your pronunciation and fluency.</p>
+    <div class="passage">${esc(T.passage||'(No passage set.)')}</div>
+    <div style="text-align:center;margin-top:20px"><button class="btn-primary" onclick="beginReading()">I'm ready — begin reading</button></div>`);
+  react('happy',"Hello, and welcome! Let's begin with the reading. When you're ready, read the passage out loud, clearly and confidently. Don't worry — you're going to do great.",()=>setAvatar(false,'Press “begin” when ready'));
+}
+function beginReading(){
+  if(!T.passage){ stepSpeakingIntro(); return; }
+  document.querySelector('.panel').innerHTML=`<h2>Part 1 — Reading aloud</h2>
+    <div class="passage" style="max-height:200px">${esc(T.passage)}</div>
+    <p class="muted" style="margin-top:14px">Live transcript:</p><div class="transcript" id="liveT"><span class="muted">…listening…</span></div>
+    <div style="text-align:center;margin-top:18px"><div class="mic-btn rec" id="micR">●</div>
+      <p class="muted" style="margin-top:8px">Recording — read the passage, then press <b>Done</b>.</p>
+      <button class="btn-primary" onclick="finishReading()">Done reading ✓</button></div>`;
+  bubble("Go ahead — I'm listening. Take your time."); setAvatar(false,'Listening to your reading');
+  startRecognition(txt=>{ readingTranscript=txt; const l=document.getElementById('liveT'); if(l)l.textContent=txt||'…'; });
+}
+function finishReading(){
+  stopRecognition(); readingConf=recConfidence; readingDur=recDuration;
+  const r=scoreReading(T.passage,readingTranscript,readingConf,readingDur);
+  const expr=r.band>=7?'happy':r.band>=5.5?'happy':'concern';
+  const msg=r.band>=7?"Excellent reading — very clear and well-paced!":r.band>=5.5?"Good job! Nice and steady.":"Well done for finishing. We'll keep working on clarity.";
+  react(expr,msg,()=>stepSpeakingIntro());
+}
+
+/* ---- SPEAKING ---- */
+function stepSpeakingIntro(){
+  if(!T.questions.length) return finishAll();
+  shell(1,`<h2>Part 2 — Speaking</h2><p class="muted">I'll ask you ${T.questions.length} question(s). Speak naturally; I'll react and may ask you to expand.</p>
+    <div style="text-align:center;margin-top:20px"><button class="btn-primary" onclick="askQuestion()">Start speaking part ▶</button></div>`);
+  react('happy',"Great work. Now for the speaking part. I'll ask a few questions — just speak naturally and confidently. There are no wrong answers.",()=>setAvatar(false,'Press start when ready'));
+}
+function renderSpeakUI(q,retry){
+  document.querySelector('.panel').innerHTML=`<h2>Part 2 — Speaking · Q${qIdx+1}/${T.questions.length}</h2>
+    <div class="passage" style="background:#eef5fb;border-color:var(--blue)"><b>Question:</b> ${esc(q.topic)}</div>
+    ${retry?'<p style="color:var(--amber);margin:10px 0 0"><b>Follow-up:</b> please expand on your answer.</p>':''}
+    <p class="muted" style="margin-top:14px">Your answer (live transcript):</p><div class="transcript" id="liveT"><span class="muted">…press the mic and speak…</span></div>
+    <div style="text-align:center;margin-top:18px"><div class="mic-btn" id="micS" onclick="toggleSpeak()">🎤</div>
+      <p class="muted" style="margin-top:8px" id="micHint">Press the mic, answer, then press <b>Done</b>.</p>
+      <button class="btn-ghost" id="doneBtn" onclick="finishAnswer()" disabled>Done ✓</button></div>`;
+  curAnswer='';
+}
+function askQuestion(){ const q=T.questions[qIdx]; retried=false; renderSpeakUI(q,false);
+  react('neutral',q.topic,()=>setAvatar(false,'Press the mic to answer')); }
+function toggleSpeak(){
+  const mic=document.getElementById('micS');
+  if(!recActive){ mic.classList.add('rec'); mic.textContent='●'; document.getElementById('doneBtn').disabled=false;
+    document.getElementById('micHint').innerHTML='Listening… speak now, then press <b>Done</b>.';
+    startRecognition(txt=>{ curAnswer=txt; const l=document.getElementById('liveT'); if(l)l.textContent=txt||'…'; setAvatar(false); });
+  } else { stopRecognition(); mic.classList.remove('rec'); mic.textContent='🎤'; }
+}
+function finishAnswer(){
+  stopRecognition();
+  const q=T.questions[qIdx];
+  const answer=(SR?curAnswer:(window.__manual||''))||'';
+  const m=scoreSpeaking(answer,q,recConfidence,recDuration);
+  // dynamic reactions + follow-up retries
+  if(!retried && m.words>0 && m.words<8){
+    retried=true; react('concern',"I'd love to hear a little more. Could you expand on that?",()=>{ renderSpeakUI(q,true); setAvatar(false,'Press the mic to continue'); }); return;
+  }
+  if(!retried && m.words>=8 && m.relevance<0.10){
+    retried=true; react('concern',`That's interesting, but let's stay focused on the question. ${q.topic} Could you try again?`,()=>{ renderSpeakUI(q,true); setAvatar(false,'Press the mic to continue'); }); return;
+  }
+  speakAnswers.push({topic:q.topic,reference:q.reference,answer,score:m});
+  qIdx++; retried=false;
+  const last=qIdx>=T.questions.length;
+  let expr,txt;
+  if(m.band>=7){expr='happy';txt="That's a really well-developed answer — thank you!";}
+  else if(m.band>=5){expr='happy';txt="Thank you, that's a good answer.";}
+  else {expr='neutral';txt="Thank you for your answer.";}
+  if(m.relevance>=0.35) txt+=" You stayed nicely on topic.";
+  txt += last?" That's the end of the interview — let me prepare your results.":" Let's move to the next question.";
+  react(expr,txt,()=> last?finishAll():askQuestion());
+}
+
+/* ========================================================================
+   IELTS BAND DESCRIPTORS (official public version — condensed) + AI EXAMINER
+   ======================================================================== */
+if(!db.settings) db.settings={llmUrl:'',llmKey:'',llmModel:'',psUrl:''};
+const IELTS={
+  fluency:{
+    9:"Fluent with only rare repetition or self-correction; any hesitation prepares content, not words. Fully coherent and appropriately extended topic development.",
+    8:"Fluent with only occasional repetition or self-correction; hesitation is mostly content-related. Coherent, appropriate and relevant topic development.",
+    7:"Keeps going and produces long turns without noticeable effort; some hesitation/self-correction mid-sentence but coherence is maintained. Flexible use of discourse markers and connectives.",
+    6:"Willing to produce long turns; coherence may be lost at times through hesitation or repetition. Uses a range of connectives, though not always appropriately.",
+    5:"Usually keeps going but relies on repetition, self-correction or slow speech; overuses certain connectives. More complex speech causes disfluency.",
+    4:"Cannot keep going without noticeable pauses; speech may be slow with frequent repetition and self-correction. Links only simple sentences, with some breakdowns in coherence.",
+    3:"Frequent, sometimes long pauses while searching for words; limited ability to link sentences; frequently unable to convey the basic message."},
+  lexical:{
+    9:"Total flexibility and precise use of vocabulary in all contexts; sustained accurate and idiomatic language.",
+    8:"Wide resource used flexibly to convey precise meaning; skilful use of less common and idiomatic items; effective paraphrase.",
+    7:"Resource used flexibly across varied topics; some less common and idiomatic vocabulary with awareness of collocation, despite occasional inappropriacy; effective paraphrase.",
+    6:"Resource sufficient to discuss topics at length; vocabulary sometimes inappropriate but meaning is clear; generally paraphrases successfully.",
+    5:"Resource sufficient for familiar and unfamiliar topics but with limited flexibility; attempts paraphrase with mixed success.",
+    4:"Resource sufficient for familiar topics only; frequent errors in word choice; rarely attempts paraphrase.",
+    3:"Vocabulary limited to simple words for personal information; inadequate for unfamiliar topics."},
+  grammar:{
+    9:"Structures are precise and accurate at all times, apart from slips characteristic of native-speaker speech.",
+    8:"Wide range of structures used flexibly; the majority of sentences are error-free with only occasional, non-systematic errors.",
+    7:"A range of structures used flexibly; error-free sentences are frequent; both simple and complex forms used effectively despite some errors.",
+    6:"A mix of short and complex sentence forms with limited flexibility; errors frequent in complex structures but rarely impede communication.",
+    5:"Basic sentence forms fairly well controlled; complex structures attempted but limited in range and usually containing errors.",
+    4:"Produces basic forms and some error-free short utterances; subordinate clauses are rare; structures repetitive and errors frequent.",
+    3:"Basic sentence forms attempted but grammatical errors are numerous except in memorised utterances."},
+  pron:{
+    9:"Uses a full range of phonological features for precise meaning; effortlessly understood; accent has no effect on intelligibility.",
+    8:"Wide range of phonological features; sustained appropriate rhythm and flexible stress/intonation; easily understood, accent has minimal effect.",
+    7:"Shows all the positive features of band 6 and some of band 8 — generally clear, well-controlled pronunciation.",
+    6:"Uses a range of phonological features with variable control; some effective intonation and stress; occasional mispronunciation but generally understood without much effort.",
+    5:"Shows features of band 4 and some of band 6 — clarity is variable.",
+    4:"Limited range of phonological features; frequent lapses in rhythm; words or phonemes frequently mispronounced, causing lack of clarity; understanding requires effort.",
+    3:"Some recognisable words and phonemes, but overall little clear meaning is conveyed."}
+};
+function descFor(crit,band){ const t=IELTS[crit]; if(!t) return ""; const b=Math.round(Number(band)||0);
+  const keys=Object.keys(t).map(Number).sort((x,y)=>y-x); for(const k of keys){ if(b>=k) return t[k]; } return t[keys[keys.length-1]]; }
+
+// ---- AI examiner: OpenAI-compatible (local Ollama / LM Studio / cloud) ----
+function llmConfigured(){ return !!(db.settings.llmUrl && db.settings.llmModel); }
+function num(x){ const n=parseFloat(x); return isNaN(n)?0:n; }
+async function llmChat(messages){
+  if(!db.settings.llmUrl||!db.settings.llmModel) return null;
+  try{
+    const ctrl=new AbortController(), to=setTimeout(()=>ctrl.abort(),90000);
+    const res=await fetch(db.settings.llmUrl,{method:'POST',signal:ctrl.signal,
+      headers:Object.assign({'Content-Type':'application/json'}, db.settings.llmKey?{'Authorization':'Bearer '+db.settings.llmKey}:{}),
+      body:JSON.stringify({model:db.settings.llmModel,temperature:0,stream:false,messages})});
+    clearTimeout(to);
+    if(!res.ok) return null;
+    const d=await res.json();
+    return (d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||null;
+  }catch(e){ return null; }
+}
+async function llmRaw(text){ return llmChat([{role:'user',content:text}]); }
+async function llmExamine(answers, asrConf){
+  const sys="You are a certified IELTS Speaking examiner. Score strictly using the official IELTS Speaking band descriptors (public version), bands 1-9 with half-bands allowed, on four criteria: fluency_coherence, lexical_resource, grammatical_range_accuracy, pronunciation. Judge only the candidate's own language; the reference answer is a guide to a strong response, not a required match. The candidate text comes from automatic speech recognition, so judge pronunciation conservatively using the asr_confidence value (0-1) provided. Return ONLY valid minified JSON, no commentary.";
+  const shape='{"answers":[{"fluency_coherence":0,"lexical_resource":0,"grammatical_range_accuracy":0,"pronunciation":0,"band":0,"comment":""}],"overall":{"fluency_coherence":0,"lexical_resource":0,"grammatical_range_accuracy":0,"pronunciation":0,"band":0},"feedback":["",""]}';
+  const payload={asr_confidence:Math.round((asrConf||0)*100)/100, answers:answers.map(a=>({question:a.topic,reference_strong_answer:a.reference,candidate_answer:a.answer}))};
+  const raw=await llmChat([{role:'system',content:sys},{role:'user',content:"Return JSON exactly in this shape (all numbers are IELTS bands 1-9):\n"+shape+"\n\nScore this candidate:\n"+JSON.stringify(payload)}]);
+  if(!raw) return null;
+  try{ const m=raw.match(/\{[\s\S]*\}/); if(!m) return null; const j=JSON.parse(m[0]); return j&&j.overall?j:null; }catch(e){ return null; }
+}
+
+/* ========================================================================
+   SCORING ENGINE (heuristic fallback: pronunciation, relevance, fluency)
+   ======================================================================== */
+const STOP=new Set("the a an and or but to of in on for with that this is are was were be been being it its as at by from we you they he she i my your our their have has had do does did not so if then than too very just can could would should will".split(' '));
+const FILLERS=['um','uh','er','erm','hmm','like','you know','actually','basically'];
+function words(s){ return (s||'').toLowerCase().replace(/[^a-z'\s]/g,' ').split(/\s+/).filter(Boolean); }
+function keywords(s){ return words(s).filter(w=>w.length>3&&!STOP.has(w)); }
+function clampBand(x){ return Math.max(3,Math.min(9,Math.round(x*2)/2)); }
+function c9(v){ return Math.max(3,Math.min(9,v)); }
+function r1(x){ return Math.round(x*2)/2; }
+function scoreReading(passage,spoken,conf,dur){
+  const P=words(passage), S=words(spoken);
+  if(!P.length||!S.length) return {band:clampBand(4),accuracy:0,coverage:0,wordsRead:S.length,pron:r1(conf>0?c9(3+conf*6):5),wpm:0};
+  const tmp={}; P.forEach(w=>tmp[w]=(tmp[w]||0)+1);
+  let hit=0; S.forEach(w=>{ if(tmp[w]>0){hit++;tmp[w]--;} });
+  const accuracy=Math.round(100*hit/S.length), coverage=Math.round(100*hit/P.length);
+  const wpm=dur>0?Math.round(S.length/(dur/60)):0;
+  const pron=conf>0?c9(3+conf*6):c9(4+accuracy/100*4);
+  const paceBonus=(wpm>=110&&wpm<=180)?0.5:(wpm>0?-0.3:0);
+  const base=3.0 + accuracy/100*2.6 + coverage/100*2.0 + (pron-5)*0.3 + paceBonus;
+  return {band:clampBand(base),accuracy,coverage,wordsRead:S.length,pron:r1(pron),wpm};
+}
+function scoreSpeaking(answer,q,conf,dur){
+  const W=words(answer), n=W.length;
+  if(n<3) return {words:n,relevance:0,diversity:0,wpm:0,fluency:3,lexical:3,grammar:3,pron:3,coherence:3,band:3};
+  const uniq=new Set(W).size, diversity=uniq/n;
+  const sentences=(answer.match(/[.!?]+/g)||[]).length||Math.max(1,Math.round(n/14));
+  const avgLen=n/sentences;
+  let fillerCount=0; FILLERS.forEach(f=>{ const re=new RegExp('\\b'+f.replace(' ','\\s+')+'\\b','g'); fillerCount+=(answer.toLowerCase().match(re)||[]).length; });
+  const fillerRate=fillerCount/n;
+  const wpm=dur>0?Math.round(n/(dur/60)):0;
+  const aSet=new Set(keywords(answer)), qk=keywords(q.topic), rk=keywords(q.reference);
+  const qHit=qk.filter(w=>aSet.has(w)).length, rHit=rk.filter(w=>aSet.has(w)).length;
+  let relevance=(qk.length?qHit/qk.length:0)*0.45 + (rk.length?rHit/rk.length:0)*0.55;
+  if(n>=30) relevance=Math.min(1,relevance+0.12);
+  const conf01=conf>0?conf:Math.min(1,0.55+n/200);
+  let fluency  = 3 + Math.min(3.2,n/40) - fillerRate*7 + ((wpm>=90&&wpm<=170)?0.8:0);
+  let lexical  = 3 + diversity*5 + Math.min(1.5,uniq/45);
+  let grammar  = 3.5 + Math.min(3,avgLen/6) + (avgLen>24?-1.2:0);
+  let pron     = 3 + conf01*6 - fillerRate*4;
+  let coherence= 3 + relevance*5.5;
+  fluency=c9(fluency);lexical=c9(lexical);grammar=c9(grammar);pron=c9(pron);coherence=c9(coherence);
+  const band=clampBand((fluency+lexical+grammar+pron+coherence)/5);
+  return {words:n,relevance,diversity:Math.round(diversity*100),wpm,
+    fluency:r1(fluency),lexical:r1(lexical),grammar:r1(grammar),pron:r1(pron),coherence:r1(coherence),band};
+}
+function avg(a){ return a.reduce((x,y)=>x+y,0)/a.length; }
+function buildResult(){
+  const reading=scoreReading(T.passage,readingTranscript,readingConf,readingDur);
+  const sB=speakAnswers.map(a=>a.score.band);
+  const crit=sB.length?{
+    fluency:r1(avg(speakAnswers.map(a=>(a.score.fluency+a.score.coherence)/2))),
+    lexical:r1(avg(speakAnswers.map(a=>a.score.lexical))),
+    grammar:r1(avg(speakAnswers.map(a=>a.score.grammar))),
+    pron:r1(avg(speakAnswers.map(a=>a.score.pron))),
+  }:null;
+  const relAvg=sB.length?avg(speakAnswers.map(a=>a.score.relevance)):0;
+  const speaking={band:sB.length?clampBand(avg(sB)):0,criteria:crit,answers:speakAnswers,relevance:Math.round(relAvg*100)};
+  const haveR=!!T.passage, haveS=sB.length>0;
+  const overall=haveR&&haveS?clampBand((reading.band+speaking.band)/2):(haveR?reading.band:speaking.band);
+  const me=db.users.find(u=>u.u===session.u);
+  return {user:session.u,name:me?me.name:session.name,testId:T.id,testName:T.name,date:Date.now(),
+    reading,speaking,overall,feedback:makeFeedback(reading,speaking),engine:'Built-in IELTS descriptor engine'};
+}
+async function buildResultLLM(){
+  const reading=scoreReading(T.passage,readingTranscript,readingConf,readingDur);
+  const j=await llmExamine(speakAnswers, recConfidence);
+  if(!j||!j.overall) return null;
+  const o=j.overall;
+  const crit={fluency:r1(c9(num(o.fluency_coherence))),lexical:r1(c9(num(o.lexical_resource))),
+    grammar:r1(c9(num(o.grammatical_range_accuracy))),pron:r1(c9(num(o.pronunciation)))};
+  const sBand=clampBand(num(o.band)|| (crit.fluency+crit.lexical+crit.grammar+crit.pron)/4);
+  const answers=speakAnswers.map((a,i)=>{ const ja=(j.answers&&j.answers[i])||{};
+    return Object.assign({},a,{comment:ja.comment||'',score:Object.assign({},a.score,{
+      fluency:r1(c9(num(ja.fluency_coherence)||a.score.fluency)),
+      lexical:r1(c9(num(ja.lexical_resource)||a.score.lexical)),
+      grammar:r1(c9(num(ja.grammatical_range_accuracy)||a.score.grammar)),
+      pron:r1(c9(num(ja.pronunciation)||a.score.pron)),
+      coherence:a.score.coherence,
+      band:clampBand(num(ja.band)||a.score.band)})}); });
+  const speaking={band:sBand,criteria:crit,answers,relevance:Math.round(avg(speakAnswers.map(a=>a.score.relevance))*100)};
+  const haveR=!!T.passage;
+  const overall=haveR&&answers.length?clampBand((reading.band+sBand)/2):(haveR?reading.band:sBand);
+  const fb=(Array.isArray(j.feedback)&&j.feedback.filter(Boolean).length)?j.feedback.filter(Boolean):makeFeedback(reading,speaking);
+  const me=db.users.find(u=>u.u===session.u);
+  return {user:session.u,name:me?me.name:session.name,testId:T.id,testName:T.name,date:Date.now(),
+    reading,speaking,overall,feedback:fb,engine:'AI examiner — '+db.settings.llmModel};
+}
+function makeFeedback(r,s){
+  const fb=[];
+  if(r.accuracy>0){ fb.push(r.accuracy<70?"Reading: read every word accurately and avoid skipping ahead.":"Reading: clear and accurate — keep your pace natural and steady.");
+    if(r.wpm&&(r.wpm<100||r.wpm>185)) fb.push("Reading: your pace was about "+r.wpm+" words/min — aim for roughly 120–160 for a natural delivery."); }
+  if(s.criteria){
+    const lo=Object.entries(s.criteria).sort((a,b)=>a[1]-b[1])[0];
+    const map={fluency:"Fluency & coherence — speak in longer connected stretches with fewer pauses.",
+      lexical:"Vocabulary — use more varied, precise and topic-specific words.",
+      grammar:"Grammar — vary sentence structures and watch tense consistency.",
+      pron:"Pronunciation — speak clearly and reduce filler sounds (um, uh)."};
+    fb.push("Speaking: "+(map[lo[0]]||"keep developing your answers."));
+    if(s.relevance<35) fb.push("Speaking: focus more tightly on what each question is actually asking.");
+    fb.push("Speaking: develop each answer with a reason and a brief example to lift your band.");
+  }
+  return fb;
+}
+
+/* ---- RESULT / REPORT ---- */
+function showEvaluating(){ document.getElementById('view').innerHTML=`<div class="card" style="text-align:center;padding:60px">
+  <div class="band-big" style="font-size:32px;color:var(--navy)">Evaluating…</div>
+  <p class="muted">${llmConfigured()?'Scoring your responses with the AI examiner against the IELTS band descriptors.':'Scoring your responses against the IELTS band descriptors.'}</p></div>`; }
+async function finishAll(){
+  try{speechSynthesis.cancel();}catch(e){}
+  showEvaluating();
+  let res=null;
+  if(llmConfigured()){ try{ res=await buildResultLLM(); }catch(e){ res=null; } }
+  if(!res) res=buildResult();
+  db.results.push(res); DB.save(db); renderReport(res,false);
+}
+function renderReport(res,adminView){
+  try{speechSynthesis.cancel();}catch(e){} recActive=false; FACE.stopBlink&&FACE.stopBlink();
+  const crit=res.speaking.criteria;
+  document.getElementById('view').innerHTML=`
+    <div class="card" style="margin-bottom:18px;text-align:center;background:linear-gradient(135deg,#1f3864,#2e75b6);color:#fff">
+      <p style="opacity:.85;margin:0;letter-spacing:1px">OVERALL BAND</p><div class="band-big">${res.overall.toFixed(1)}</div>
+      <p style="opacity:.9;margin:6px 0 0">${bandLabel(res.overall)} · ${esc(res.name)} · ${esc(res.testName)}</p></div>
+    <div class="row" style="margin-bottom:18px">
+      <div class="scorecard"><p class="muted" style="margin:0">Reading (read-aloud)</p><div class="band-big" style="font-size:38px;color:var(--navy)">${res.reading.band.toFixed(1)}</div>
+        <p class="muted" style="margin:6px 0 0;font-size:13px">${res.reading.wordsRead} words · ${res.reading.accuracy}% accuracy · pron ${res.reading.pron.toFixed(1)}${res.reading.wpm?` · ${res.reading.wpm} wpm`:''}</p></div>
+      <div class="scorecard"><p class="muted" style="margin:0">Speaking</p><div class="band-big" style="font-size:38px;color:var(--navy)">${res.speaking.band.toFixed(1)}</div>
+        <p class="muted" style="margin:6px 0 0;font-size:13px">${res.speaking.answers.length} answer(s) · ${res.speaking.relevance}% on-topic</p></div></div>
+    ${crit?`<div class="card" style="margin-bottom:18px"><h2>Speaking criteria — IELTS band descriptors</h2>
+      ${critRow('Fluency & Coherence','fluency',crit.fluency)}
+      ${critRow('Lexical Resource','lexical',crit.lexical)}
+      ${critRow('Grammatical Range & Accuracy','grammar',crit.grammar)}
+      ${critRow('Pronunciation','pron',crit.pron)}
+      <p class="muted" style="margin-top:12px;font-size:12.5px">Scored by: ${esc(res.engine||'Built-in IELTS descriptor engine')} · ${res.speaking.relevance}% on-topic</p></div>`:''}
+    <div class="card" style="margin-bottom:18px"><h2>Feedback &amp; tips</h2>
+      <ul style="line-height:1.7;margin:0;padding-left:20px">${res.feedback.map(f=>`<li>${esc(f)}</li>`).join('')||'<li>Great effort overall.</li>'}</ul></div>
+    ${res.speaking.answers.length?`<div class="card" style="margin-bottom:18px"><h2>Your speaking answers</h2>
+      ${res.speaking.answers.map((a,i)=>`<div class="qcard"><b>Q${i+1}. ${esc(a.topic)}</b>
+        <p style="margin:8px 0 0">${esc(a.answer)||'<span class="muted">(no answer captured)</span>'}</p>
+        ${a.comment?`<p style="margin:8px 0 0;font-size:13.5px;color:var(--navy)"><b>Examiner:</b> ${esc(a.comment)}</p>`:''}
+        <p class="muted" style="margin:6px 0 0;font-size:13px">Band ${a.score.band.toFixed(1)} · ${a.score.words} words · ${a.score.diversity}% vocab variety · ${Math.round(a.score.relevance*100)}% relevant${a.score.wpm?` · ${a.score.wpm} wpm`:''}</p></div>`).join('')}</div>`:''}
+    <div class="card" style="background:#fff7e6;border:1px solid #ffe2a8"><b>How scoring works here.</b>
+      <span class="muted"> ${esc(res.engine||'').startsWith('AI examiner')
+        ? 'Your speaking was scored by the connected AI examiner model against the official IELTS Speaking band descriptors, with reading-aloud measured deterministically (word accuracy, pace, recognition confidence). For production-grade reliability the model should be calibrated against teacher-marked samples.'
+        : 'No AI model is connected, so this used the built-in IELTS descriptor engine: pronunciation from speech-recognition confidence, fluency from speaking rate and filler words, vocabulary from word variety, grammar from sentence structure, and relevance by matching against the question and reference. Connect a model under Admin → AI &amp; Avatar for full descriptor-based grading.'}</span></div>
+    <div class="row" style="margin-top:18px"><button class="btn-primary" onclick="${adminView?"adminTab='results';renderAdmin()":'renderStudentHome()'}">${adminView?'← Back to results':'← Back to home'}</button></div>`;
+}
+function critRow(name,key,val){ return `<div style="padding:12px 0;border-bottom:1px solid var(--line)">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b>${name}</b>
+   <span style="display:flex;align-items:center;gap:12px"><span class="meter"><i style="width:${(val/9*100).toFixed(0)}%"></i></span><b style="width:34px;text-align:right">${val.toFixed(1)}</b></span></div>
+  <p class="muted" style="margin:6px 0 0;font-size:13px">${esc(descFor(key,val))}</p></div>`; }
+
+/* ---- UTIL ---- */
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function bandPill(b){ b=Number(b); const c=b>=7?'#e3f6ec':b>=5.5?'#fff4e0':'#fdecea',t=b>=7?'#1e8e5a':b>=5.5?'#c98a00':'#c0392b';
+  return `<span class="pill" style="background:${c};color:${t}">${b.toFixed(1)}</span>`; }
+function bandLabel(b){ return b>=8?'Very good user':b>=7?'Good user':b>=6?'Competent user':b>=5?'Modest user':'Limited user'; }
+if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged=()=>{}; speechSynthesis.getVoices(); }
+</script>
+<!-- ===== Realistic 3D speaking avatar (Ready Player Me + three.js) with optional NVIDIA Audio2Face lip-sync. No Unreal. Auto-falls back to the 2D presenter. ===== -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script>
+/* Avatar priority: Pixel Streaming (psUrl) > 3D model (avatarUrl) > 2D presenter.
+   When an Audio2Face endpoint (a2fUrl) is set, the interviewer speech is rerouted through it
+   to get phoneme-accurate ARKit blendshapes played on the 3D avatar. */
+if(db.settings){ if(db.settings.avatarUrl===undefined)db.settings.avatarUrl=''; if(db.settings.a2fUrl===undefined)db.settings.a2fUrl=''; DB.save(db); }
+window.use3D=function(){ return !!(db.settings&&db.settings.avatarUrl)&&!db.settings.psUrl; };
+window.__useA2F=function(){ return window.use3D()&&!!(db.settings&&db.settings.a2fUrl); };
+var __avatarSVG=avatarSVG; window.__origAvatarSVG=__avatarSVG;
+avatarSVG=function(){ return window.use3D()
+  ? '<div id="av3d" style="width:240px;height:300px;border-radius:14px;overflow:hidden;background:#141f30"></div>'
+  : __avatarSVG(); };
+var _ts=FACE.talkStart.bind(FACE),_te=FACE.talkStop.bind(FACE),_sb=FACE.startBlink.bind(FACE),_se=FACE.setExpr.bind(FACE);
+FACE.talkStart=function(){ if(window.use3D()){ if(!window.__useA2F()) window.__set3DSpeaking&&window.__set3DSpeaking(true); } else _ts(); };
+FACE.talkStop =function(){ if(window.use3D()){ window.__set3DSpeaking&&window.__set3DSpeaking(false); } else _te(); };
+FACE.startBlink=function(){ if(window.use3D()){ if(window.__init3D) setTimeout(window.__init3D,40); } else _sb(); };
+FACE.setExpr=function(e){ if(!window.use3D()) _se(e); };
+/* Reroute interviewer speech through Audio2Face when configured */
+var __speak=speak;
+speak=function(text,cb){ if(window.__useA2F()){ return window.__speakA2F(text,cb); } return __speak(text,cb); };
+window.__speakA2F=async function(text,cb){
+  try{
+    if(window.setAvatar) setAvatar(true);
+    const ctrl=new AbortController(), to=setTimeout(()=>ctrl.abort(),60000);
+    const r=await fetch(db.settings.a2fUrl,{method:'POST',signal:ctrl.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    clearTimeout(to);
+    if(!r.ok) throw new Error('a2f http '+r.status);
+    const d=await r.json();
+    if(!d.audio_b64||!d.frames) throw new Error('a2f bad payload');
+    const audio=new Audio('data:audio/wav;base64,'+d.audio_b64);
+    const done=()=>{ window.__a2fStop&&window.__a2fStop(); if(window.setAvatar)setAvatar(false); if(cb){const f=cb;cb=null;f();} };
+    audio.onended=done; audio.onerror=done;
+    window.__a2fPlay&&window.__a2fPlay(audio,d.fps||30,d.blendshape_names||d.names||['jawOpen'],d.frames);
+    await audio.play().catch(done);
+  }catch(e){ console.warn('Audio2Face failed, using browser TTS:',e&&e.message); return __speak(text,cb); }
+};
+/* Admin -> AI & Avatar: 3D avatar + Audio2Face fields */
+var __adminSettings=adminSettings;
+adminSettings=function(){ __adminSettings(); var host=document.getElementById('adminBody'); if(!host) return;
+  var card=document.createElement('div'); card.className='card'; card.style.marginTop='18px';
+  card.innerHTML='<h2>Realistic 3D avatar + Audio2Face (no Unreal)</h2>'+
+    '<p class="muted">Paste a free <b>Ready Player Me</b> (or any glTF/GLB) avatar for a realistic 3D talking head in the browser — no streaming server. Add <code>?morphTargets=ARKit</code> to the URL. For phoneme-accurate lips, also set an <b>Audio2Face</b> endpoint (your GPU server running the A2F-3D microservice via the backend). Leave both blank to use the 2D presenter. Pixel Streaming URL, if set, takes priority.</p>'+
+    '<div class="field"><label>Avatar GLB URL (Ready Player Me / glTF)</label><input id="avatarUrl" value="'+esc(db.settings.avatarUrl||'')+'" placeholder="https://models.readyplayer.me/&lt;id&gt;.glb?morphTargets=ARKit"/></div>'+
+    '<div class="field"><label>Audio2Face endpoint (optional — phoneme-accurate lips)</label><input id="a2fUrl" value="'+esc(db.settings.a2fUrl||'')+'" placeholder="http://your-gpu-server:8000/a2f"/></div>'+
+    '<button class="btn-primary" onclick="saveSettings()">Save</button> <button class="btn-ghost" onclick="window.__preview3D&&window.__preview3D()">Preview avatar</button>'+
+    '<div id="av3dPrev" style="margin-top:12px"></div>';
+  host.appendChild(card);
+};
+var __saveSettings=saveSettings;
+saveSettings=function(){ var a=document.getElementById('avatarUrl'); if(a)db.settings.avatarUrl=a.value.trim(); var b=document.getElementById('a2fUrl'); if(b)db.settings.a2fUrl=b.value.trim(); __saveSettings(); };
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+const A3={speaking:false,raf:0,renderer:null,head:null,openList:[],blink:[],morphMap:{},current:null,_bt:0};
+function webglOK(){ try{ const c=document.createElement('canvas'); return !!(window.WebGLRenderingContext&&(c.getContext('webgl')||c.getContext('experimental-webgl'))); }catch(e){ return false; } }
+function applyWeights(names,weights){ if(!weights)return; for(let i=0;i<names.length;i++){ const recs=A3.morphMap[String(names[i]).toLowerCase()]; if(!recs)continue; const v=Math.max(0,Math.min(1,weights[i]||0)); for(const r of recs) r.infl[r.idx]=v; } }
+function zeroMouth(){ A3.openList.forEach(r=>r.infl[r.idx]=0); }
+async function build(container,url){
+  cancelAnimationFrame(A3.raf); clearInterval(A3._bt); if(A3.renderer){ try{A3.renderer.dispose();}catch(e){} }
+  if(!webglOK()) throw new Error('WebGL unavailable');
+  if(!url) throw new Error('no avatar url');
+  container.innerHTML='';
+  const w=container.clientWidth||240, h=container.clientHeight||300;
+  const scene=new THREE.Scene(); scene.background=new THREE.Color(0x141f30);
+  const camera=new THREE.PerspectiveCamera(26,w/h,0.1,100);
+  const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(w,h); renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  container.appendChild(renderer.domElement);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x404060,1.2));
+  const key=new THREE.DirectionalLight(0xffffff,1.1); key.position.set(1,2,3); scene.add(key);
+  const gltf=await new GLTFLoader().loadAsync(url);
+  const model=gltf.scene; scene.add(model);
+  A3.openList=[]; A3.blink=[]; A3.morphMap={};
+  model.traverse(o=>{ if(o.isMesh&&o.morphTargetDictionary){ const d=o.morphTargetDictionary, infl=o.morphTargetInfluences;
+    for(const name in d){ const n=name.toLowerCase(), rec={infl,idx:d[name]};
+      (A3.morphMap[n]=A3.morphMap[n]||[]).push(rec);
+      if(n==='jawopen'||n==='mouthopen'||n==='viseme_aa'||n==='viseme_o'||n==='viseme_e'||n==='mouthfunnel') A3.openList.push(rec);
+      if(n.includes('eyeblink')||n==='eyesclosed'||n==='blink') A3.blink.push(rec); } } });
+  const box=new THREE.Box3().setFromObject(model), c=box.getCenter(new THREE.Vector3()), s=box.getSize(new THREE.Vector3());
+  const headY=box.max.y-s.y*0.10;
+  camera.position.set(c.x, headY, Math.max(s.y,0.5)*0.85+0.45); camera.lookAt(c.x, headY, c.z);
+  A3.head=model; A3.renderer=renderer;
+  A3._bt=setInterval(()=>{ if(A3.current)return; A3.blink.forEach(r=>r.infl[r.idx]=1); setTimeout(()=>A3.blink.forEach(r=>r.infl[r.idx]=0),120); }, 3600);
+  (function loop(){ A3.raf=requestAnimationFrame(loop); const t=performance.now();
+    if(A3.head) A3.head.rotation.y=Math.sin(t/2300)*0.06;
+    if(A3.current){ const cf=A3.current; const idx=Math.min(cf.frames.length-1, Math.max(0, Math.floor(cf.audio.currentTime*cf.fps))); applyWeights(cf.names, cf.frames[idx]); }
+    else { const amp=A3.speaking?(0.2+0.55*Math.abs(Math.sin(t/95))):0; A3.openList.forEach(r=>r.infl[r.idx]=amp); }
+    renderer.render(scene,camera); })();
+}
+window.__set3DSpeaking=function(b){ A3.speaking=!!b; };
+window.__a2fPlay=function(audio,fps,names,frames){ A3.current={audio,fps:fps||30,names:names||['jawOpen'],frames:frames||[]}; };
+window.__a2fStop=function(){ A3.current=null; zeroMouth(); };
+window.__init3D=async function(){ const cont=document.getElementById('av3d'); if(!cont) return;
+  try{ await build(cont, db.settings.avatarUrl); }
+  catch(e){ console.warn('3D avatar failed, using 2D presenter:',e&&e.message);
+    window.use3D=function(){return false;}; cont.outerHTML=(window.__origAvatarSVG?window.__origAvatarSVG():'');
+    if(window.FACE){ FACE.startBlink&&FACE.startBlink(); FACE.setExpr&&FACE.setExpr('neutral'); } } };
+window.__preview3D=async function(){ var p=document.getElementById('av3dPrev'); if(!p) return;
+  p.innerHTML='<div id="av3d" style="width:240px;height:300px;border-radius:12px;overflow:hidden;background:#141f30"></div>'; await window.__init3D(); };
+</script>
+
+<!-- ===== Unity WebGL avatar support (priority: Pixel Streaming > Unity WebGL > three.js 3D > 2D). ===== -->
+<script>
+(function(){
+  if(db.settings && db.settings.unityUrl===undefined){ db.settings.unityUrl=''; DB.save(db); }
+  window.useUnity=function(){ return !!(db.settings&&db.settings.unityUrl)&&!db.settings.psUrl; };
+  /* Unity takes priority over the three.js 3D avatar */
+  var _use3D=window.use3D; window.use3D=function(){ return !window.useUnity() && (_use3D?_use3D():false); };
+  /* avatarSVG -> Unity iframe when configured */
+  var _av=avatarSVG;
+  avatarSVG=function(){ return window.useUnity()
+    ? '<iframe id="unityFrame" src="'+esc(db.settings.unityUrl)+'" allow="autoplay; microphone; fullscreen" style="width:100%;height:320px;border:none;border-radius:14px;background:#000"></iframe><p class="muted" style="margin-top:8px;font-size:12px;opacity:.8;text-align:center">Unity WebGL avatar</p>'
+    : _av(); };
+  function postUnity(msg){ try{ var f=document.getElementById('unityFrame'); if(f&&f.contentWindow) f.contentWindow.postMessage(JSON.stringify(msg),'*'); }catch(e){} }
+  window.__postUnity=postUnity;
+  /* Speech: parent plays the audio (guaranteed sound + callback); Unity animates the mouth
+     between 'speak' and 'stopSpeak'. For audio-accurate lips, send audio to Unity instead
+     (see unity-avatar/INTEGRATION.md). */
+  var _sp=speak;
+  speak=function(text,cb){
+    if(window.useUnity()){
+      postUnity({type:'speak', text:text});
+      return _sp(text, function(){ postUnity({type:'stopSpeak'}); if(cb)cb(); });
+    }
+    return _sp(text,cb);
+  };
+  /* Admin: Unity WebGL URL field */
+  var _as=adminSettings;
+  adminSettings=function(){ _as(); var host=document.getElementById('adminBody'); if(!host)return;
+    var card=document.createElement('div'); card.className='card'; card.style.marginTop='18px';
+    card.innerHTML='<h2>Unity WebGL avatar (no Unreal, no GPU server)</h2>'+
+      '<p class="muted">Host a Unity WebGL build of your interviewer (realistic character + lip-sync such as uLipSync / SALSA, or Audio2Face blendshapes) and paste its URL. The app embeds it and drives speech over a postMessage bridge. Highest priority after Pixel Streaming. See <b>unity-avatar/INTEGRATION.md</b>.</p>'+
+      '<div class="field"><label>Unity WebGL URL (the build’s index.html)</label><input id="unityUrl" value="'+esc(db.settings.unityUrl||'')+'" placeholder="https://your-host/unity-avatar/index.html"/></div>'+
+      '<button class="btn-primary" onclick="saveSettings()">Save</button>';
+    host.appendChild(card);
+  };
+  var _ss=saveSettings;
+  saveSettings=function(){ var u=document.getElementById('unityUrl'); if(u)db.settings.unityUrl=u.value.trim(); _ss(); };
+  /* optional inbound signals from the Unity build */
+  window.addEventListener('message',function(ev){ try{ var m=typeof ev.data==='string'?JSON.parse(ev.data):ev.data;
+    if(m&&m.type==='unityReady') console.log('Unity avatar ready'); }catch(e){} });
+})();
+</script>
+
+</body>
+</html>

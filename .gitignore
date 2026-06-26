@@ -1,0 +1,31 @@
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Python virtual environments
+.venv/
+.venv*/
+venv/
+venv*/
+
+# Local runtime / caches / logs
+.epsilon-runtime/
+*.log
+__pycache__/
+*.pyc
+
+# Talking-head generated assets
+talkinghead-server/cache/
+talkinghead-server/portrait.jpg
+talkinghead-server/portrait-original.jpg
+
+# Heavy local model checkouts and archives
+SadTalker/
+SadTalker-main.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

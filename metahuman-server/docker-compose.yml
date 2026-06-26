@@ -1,0 +1,41 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_ORIGINS=*           # allow browser calls
+    volumes:
+      - ollama:/root/.ollama
+    # For GPU (NVIDIA): uncomment the deploy block below and install nvidia-container-toolkit
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.1
+      - WHISPER_MODEL=base.en
+      - ALLOW_ORIGINS=*
+    depends_on:
+      - ollama
+
+volumes:
+  ollama:
+
+# After 'docker compose up -d', pull the model once:
+#   docker compose exec ollama ollama pull llama3.1
+#
+# Note: a Dockerfile for ./backend is not included — for the simplest setup run the
+# backend with uvicorn directly (see README). Add a Dockerfile only if you want it
+# containerised:
+#   FROM python:3.11-slim
+#   WORKDIR /app
+#   COPY requirements.txt . && RUN pip install -r requirements.txt
+#   COPY . .
+#   CMD ["uvicorn","app:app","--host","0.0.0.0","--port","8000"]

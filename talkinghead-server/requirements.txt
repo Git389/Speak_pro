@@ -1,0 +1,6 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+# TTS (pick one): piper-tts  (recommended)  OR  pyttsx3
+# The talking-head generator itself (SadTalker or Wav2Lip) is installed from its own repo
+# with its own requirements + model weights - see README.md.

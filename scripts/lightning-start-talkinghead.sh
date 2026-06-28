@@ -58,10 +58,12 @@ cd "$SADTALKER_DIR"
 
 echo "Installing GPU PyTorch..."
 python -m pip install --upgrade pip
+python -m pip install "setuptools<81" wheel
 python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 echo "Installing SadTalker requirements..."
 python -m pip install -r requirements.txt
+python -m pip install "setuptools<81" wheel
 
 echo "Applying torchvision compatibility shim when needed..."
 python - <<'PY'

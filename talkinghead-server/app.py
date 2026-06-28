@@ -21,7 +21,7 @@ import os, io, glob, time, hashlib, tempfile, subprocess, wave, shutil, threadin
 
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 
 ENGINE        = os.getenv("ENGINE", "sadtalker")          # "sadtalker" | "wav2lip"
 PORTRAIT      = os.getenv("PORTRAIT", "portrait.jpg")
@@ -41,6 +41,41 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 GEN_LOCK = threading.Lock()
 app = FastAPI(title="Epsilon talking-head backend")
 app.add_middleware(CORSMiddleware, allow_origins=ALLOW_ORIGINS, allow_methods=["*"], allow_headers=["*"])
+
+
+@app.get("/", response_class=HTMLResponse)
+def index():
+    return """
+    <html>
+      <head>
+        <title>Epsilon Talking-Head API</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 40px; background: #0f172a; color: #e2e8f0; }
+          a { color: #93c5fd; }
+          code { background: #1e293b; padding: 2px 6px; border-radius: 6px; }
+          .card { max-width: 860px; padding: 24px; border: 1px solid #334155; border-radius: 16px; background: #111827; }
+          li { margin: 8px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>Epsilon Talking-Head Backend</h1>
+          <p>This port is the photoreal video API. It does not serve the interview UI.</p>
+          <ul>
+            <li><a href="/health">Health check</a></li>
+            <li><a href="/portrait">Current portrait</a></li>
+          </ul>
+          <p>Use <code>POST /talk</code> with JSON like <code>{"text":"Hello"}</code> to generate a talking video clip.</p>
+          <p>Important ports for this project:</p>
+          <ul>
+            <li><code>5173</code> = React interview frontend</li>
+            <li><code>8000</code> = AI backend API</li>
+            <li><code>8100</code> = talking-head video API</li>
+          </ul>
+        </div>
+      </body>
+    </html>
+    """
 
 
 @app.get("/health")

@@ -136,6 +136,20 @@ bash scripts/lightning-start-talkinghead.sh
 bash scripts/lightning-start-ai-backend.sh
 ```
 
+### Start the actual interview frontend in Lightning
+
+If you want the browser interview screen instead of the API page, run:
+
+```bash
+bash scripts/lightning-start-frontend.sh
+```
+
+Then open Lightning on port:
+
+```bash
+5173
+```
+
 ## Lightning Troubleshooting
 
 ### If `nvidia-smi` says command not found
@@ -178,6 +192,17 @@ export PYTHON_BIN="$(command -v python)"
 ```
 
 That is important because the older local Windows setup used `.venv310`, which does not exist in Lightning Studio.
+
+### If port `8000` or `8100` looks blank
+
+Those are backend API ports, not the interview UI.
+
+- `5173` = React interview app
+- `8000` = AI backend API
+- `8100` = talking-head video API
+
+After the latest update, opening `8000` should show a small backend landing page with links.
+For the actual interview screen, open port `5173`.
 
 ## Important Limits
 

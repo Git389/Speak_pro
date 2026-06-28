@@ -182,6 +182,7 @@ def _cache_key(text: str) -> str:
     parts = [
         ENGINE,
         os.path.abspath(PORTRAIT),
+        os.path.abspath(PIPER_VOICE) if PIPER_VOICE else "",
         SADTALKER_PREPROCESS,
         SADTALKER_ENHANCER,
         "still" if SADTALKER_STILL else "motion",

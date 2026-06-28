@@ -5,6 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_DIR="${REPO_DIR:-$ROOT_DIR}"
 SADTALKER_DIR="${SADTALKER_DIR:-$REPO_DIR/SadTalker}"
 TALKINGHEAD_DIR="$REPO_DIR/talkinghead-server"
+PIPER_VOICE_DIR="${PIPER_VOICE_DIR:-$REPO_DIR/piper-voices}"
+DEFAULT_PIPER_VOICE="${DEFAULT_PIPER_VOICE:-en_US-lessac-medium}"
 
 cd "$REPO_DIR"
 
@@ -95,6 +97,17 @@ print({"cuda_available": torch.cuda.is_available(), "device_count": torch.cuda.d
 PY
 
 cd "$TALKINGHEAD_DIR"
+
+mkdir -p "$PIPER_VOICE_DIR"
+if [[ -z "${PIPER_VOICE:-}" ]]; then
+  export PIPER_VOICE="$PIPER_VOICE_DIR/$DEFAULT_PIPER_VOICE.onnx"
+fi
+
+if [[ ! -f "$PIPER_VOICE" ]]; then
+  echo "Downloading default Piper voice: $DEFAULT_PIPER_VOICE"
+  curl -L "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/$DEFAULT_PIPER_VOICE.onnx?download=true" -o "$PIPER_VOICE"
+  curl -L "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/$DEFAULT_PIPER_VOICE.onnx.json?download=true" -o "$PIPER_VOICE.json"
+fi
 
 export ENGINE="${ENGINE:-sadtalker}"
 export PORTRAIT="${PORTRAIT:-$TALKINGHEAD_DIR/portrait.jpg}"

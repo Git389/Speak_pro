@@ -99,7 +99,8 @@ def whisper():
 
 @app.get("/health")
 def health():
-    return {"ok": True, "ollama_model": OLLAMA_MODEL, "whisper_model": WHISPER_MODEL}
+    return {"ok": True, "ollama_model": OLLAMA_MODEL, "whisper_model": WHISPER_MODEL,
+            "piper_voice": os.getenv("PIPER_VOICE", "")}
 
 
 @app.post("/stt")

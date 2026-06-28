@@ -83,6 +83,7 @@ def health():
     return {"ok": True, "engine": ENGINE, "portrait": PORTRAIT,
             "sadtalker": bool(SADTALKER_DIR), "wav2lip": bool(WAV2LIP_DIR),
             "python_bin": _python_bin(),
+            "piper_voice": PIPER_VOICE,
             "sadtalker_preprocess": SADTALKER_PREPROCESS,
             "sadtalker_enhancer": SADTALKER_ENHANCER,
             "sadtalker_still": SADTALKER_STILL,

@@ -73,6 +73,20 @@ If the backend is unreachable or a line fails, the app falls back to the 3D avat
 - `GET /health` - shows engine + whether the generator dir is set.
 - `POST /talk` `{ "text": "..." }` - returns an `video/mp4` of the portrait speaking the text.
 
+## Batch-generate the Speak Pro intro video
+
+If you want a ready-made narrated product intro instead of generating one line at a time, run this from the repo root:
+
+```bash
+bash scripts/lightning-generate-intro-video.sh
+```
+
+It reads `scripts/intro/speak-ai-app-intro.txt`, renders each line through `POST /talk`, and combines the clips into:
+
+```bash
+.epsilon-runtime/speak-ai-app-intro-5min.mp4
+```
+
 ## Notes & honest limits
 - **Latency:** per-utterance generation means a short pause before each interviewer line (a few
   seconds on a good GPU; longer on weak hardware). Caching makes repeats instant. For truly

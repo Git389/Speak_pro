@@ -1,0 +1,50 @@
+# Five-minute introduction script for the Speak Pro / Speak AI app.
+# One line = one talking-head segment.
+
+Hello, and welcome. This is Speak Pro, our AI-powered speaking practice and interview preparation platform designed to help learners and candidates build confidence through realistic conversation.
+
+Speak Pro was created for two important use cases. The first is IELTS speaking preparation, where learners need regular, natural practice before the real exam. The second is job interview preparation, where candidates need to answer clearly, confidently, and professionally under pressure.
+
+Instead of giving users a static question list, Speak Pro creates a live interactive experience. The system can ask questions, listen to the user's answer, respond with follow-up prompts, and guide the conversation in a way that feels much closer to a real interview.
+
+At the center of the product is an AI interviewer. This interviewer can act like an IELTS examiner or a hiring manager, depending on the mode selected by the user. That means the same platform can support education, training, career readiness, and communication coaching.
+
+The frontend experience is designed to feel familiar and easy to use. Users can open the app, choose their interview type, enter their name, decide whether to use the webcam, and then start a complete speaking session directly in the browser.
+
+During the interview, the system records the session flow visually. The user can see the interviewer, see their own webcam picture in picture, read the current question, and speak naturally while the transcript is captured and processed.
+
+One of the strongest features of Speak Pro is that it does not depend on only one avatar style. The platform supports multiple presentation modes, including a browser-based three-dimensional interviewer, a photoreal talking-head video interviewer, and integration paths for advanced character systems.
+
+For photoreal delivery, we connected the app to a local and cloud-friendly talking-head backend. This backend uses a single portrait image and generates a lip-synced speaking video, so the interviewer can appear more realistic than a standard animated avatar.
+
+This is especially useful for demos, mock interviews, and polished training experiences. It allows organizations to present a professional interviewer without building a full custom video production pipeline from scratch.
+
+Another important part of the system is speech processing. The app can use speech recognition to capture the learner's response, and it can generate spoken interviewer output through text-to-speech. This creates a much more natural practice loop than a text-only chatbot.
+
+For IELTS scenarios, the platform can structure the conversation like a real speaking test. It can begin with personal warm-up questions, move into a longer response prompt, and then continue with deeper follow-up questions that require explanation, examples, and opinions.
+
+For job interview scenarios, the system can focus on introductions, strengths, behavioral questions, role motivation, difficult situations, communication style, and problem solving. That makes the platform useful for students, freshers, and working professionals.
+
+After the speaking session, the platform can provide scoring and feedback. The goal is not just to tell the learner whether they did well or badly, but to help them understand how they can improve fluency, structure, confidence, and clarity in future attempts.
+
+From a technical perspective, Speak Pro is built in a modular way. The interview frontend, the AI backend, and the talking-head generation service are separated, so each part can be improved or scaled independently.
+
+This architecture gives us flexibility. We can run the frontend locally, move the talking-head generation service to a GPU environment, and keep the scoring or language model services on separate infrastructure when needed.
+
+That is why Lightning AI became a useful option for us. Lightning gives access to cloud environments where GPU-backed generation can be tested without needing a permanent dedicated machine from the start.
+
+In practice, that means we can keep development lightweight while still using stronger hardware for the photoreal video generation step. We only need the GPU when we want to create moving talking-head clips, especially for higher quality rendering.
+
+This setup is also cost-aware. We do not need to run every part of the platform on expensive infrastructure all the time. We can reserve GPU usage for the parts that truly benefit from acceleration and keep the rest simple and efficient.
+
+Speak Pro can be valuable for a wide range of users. Students preparing for English speaking exams can use it for regular practice. Job seekers can rehearse common interview questions. Trainers and institutions can use it as a guided communication tool.
+
+Because the experience is interactive and visual, it also reduces the fear that many users feel before speaking tests or interviews. Repetition in a realistic environment helps users become more comfortable, more fluent, and more self-aware.
+
+Going forward, the platform can be extended even further. We can add richer analytics, customized question banks, role-specific interview packages, student performance history, and organization dashboards for training programs.
+
+We can also continue improving the interviewer presentation layer, whether through better photoreal generation, stronger voice quality, or more advanced interactive character systems. The foundation is already in place for those upgrades.
+
+In summary, Speak Pro is more than a simple question-and-answer tool. It is an AI-driven speaking practice environment that combines conversation, visual presence, transcription, scoring, and realistic interaction into a single workflow.
+
+Thank you for watching this introduction to Speak Pro. We are excited about how this platform can support speaking confidence, exam preparation, and interview readiness through practical AI experiences.

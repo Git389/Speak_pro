@@ -150,6 +150,27 @@ Then open Lightning on port:
 5173
 ```
 
+## Generate The 5-Minute Speak Pro Intro Video
+
+Once the talking-head backend is running on port `8100`, you can generate a narrated intro video from the prepared script:
+
+```bash
+cd ~/Speak_pro
+bash scripts/lightning-generate-intro-video.sh
+```
+
+The finished file will be written to:
+
+```bash
+~/Speak_pro/.epsilon-runtime/speak-ai-app-intro-5min.mp4
+```
+
+If you want to change the narration, edit:
+
+```bash
+scripts/intro/speak-ai-app-intro.txt
+```
+
 ## Lightning Troubleshooting
 
 ### If `nvidia-smi` says command not found

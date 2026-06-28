@@ -63,18 +63,24 @@ def portrait():
 
 def _python_bin() -> str:
     """Use an explicit generator interpreter when available, otherwise fall back to PATH."""
-    if PYTHON:
+    if PYTHON and os.path.exists(PYTHON):
         return PYTHON
 
     candidates = []
     if SADTALKER_DIR:
         candidates.extend([
+            os.path.join(SADTALKER_DIR, ".venv310", "bin", "python"),
+            os.path.join(SADTALKER_DIR, ".venv", "bin", "python"),
+            os.path.join(SADTALKER_DIR, "venv", "bin", "python"),
             os.path.join(SADTALKER_DIR, ".venv310", "Scripts", "python.exe"),
             os.path.join(SADTALKER_DIR, ".venv", "Scripts", "python.exe"),
             os.path.join(SADTALKER_DIR, "venv", "Scripts", "python.exe"),
         ])
     if WAV2LIP_DIR:
         candidates.extend([
+            os.path.join(WAV2LIP_DIR, ".venv310", "bin", "python"),
+            os.path.join(WAV2LIP_DIR, ".venv", "bin", "python"),
+            os.path.join(WAV2LIP_DIR, "venv", "bin", "python"),
             os.path.join(WAV2LIP_DIR, ".venv310", "Scripts", "python.exe"),
             os.path.join(WAV2LIP_DIR, ".venv", "Scripts", "python.exe"),
             os.path.join(WAV2LIP_DIR, "venv", "Scripts", "python.exe"),
@@ -83,7 +89,7 @@ def _python_bin() -> str:
     for path in candidates:
         if path and os.path.exists(path):
             return path
-    return "python"
+    return shutil.which("python") or "python"
 
 
 def _tts(text: str, out_wav: str):

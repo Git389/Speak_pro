@@ -104,6 +104,81 @@ Use the same Studio if you want:
 - a hosted FastAPI backend
 - a single public endpoint for `/tts`, `/stt`, `/score`, and `/v1/chat/completions`
 
+## Commands That Match Lightning Studio
+
+The earlier local Windows commands are not the best fit for Lightning Studio.
+Lightning gives you one main conda environment, so do not create `.venv` or `.venv310` inside the Studio.
+
+### Clone the repo
+
+```bash
+git clone https://github.com/Git389/Speak_pro.git
+cd Speak_pro
+```
+
+### Start the talking-head backend in Lightning
+
+1. Upload your interviewer portrait to:
+
+```bash
+talkinghead-server/portrait.jpg
+```
+
+2. Run:
+
+```bash
+bash scripts/lightning-start-talkinghead.sh
+```
+
+### Start the AI backend in Lightning
+
+```bash
+bash scripts/lightning-start-ai-backend.sh
+```
+
+## Lightning Troubleshooting
+
+### If `nvidia-smi` says command not found
+
+That usually means the current Studio is not attached to a GPU machine yet, or the container image does not expose the tool.
+Use the Lightning machine selector to attach a GPU-backed Studio before expecting SadTalker to render.
+
+### If Lightning says venv creation is not allowed
+
+That is expected in Studio.
+Use the built-in conda environment and the `scripts/lightning-start-*.sh` scripts instead of:
+
+```bash
+python -m venv ...
+source .venv/bin/activate
+```
+
+### If SadTalker fails on Python 3.12
+
+SadTalker's pinned dependency stack is old and does not install cleanly on the default Python 3.12 Studio image.
+Run this once in the Studio terminal, then open a fresh terminal:
+
+```bash
+conda install -y python=3.10
+```
+
+Then rerun:
+
+```bash
+bash scripts/lightning-start-talkinghead.sh
+```
+
+### If `/talk` starts but generation fails later
+
+Make sure `PYTHON_BIN` points to a real interpreter.
+The Lightning script now sets:
+
+```bash
+export PYTHON_BIN="$(command -v python)"
+```
+
+That is important because the older local Windows setup used `.venv310`, which does not exist in Lightning Studio.
+
 ## Important Limits
 
 ### Good fit for Lightning free GPU
